@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00c8ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+    <meta charset="UTF-8">
+    <meta name="viwport" content="width=device-width, initial-scale=1.0">
+    <title>سلامتك - منصة صحتك الذكية</title>
+    <!-- Favicon -->
+<link rel="icon" href="auravox-logo.png" type="image/png">
+<link rel="shortcut icon" href="auravox-logo.png" type="image/png">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22سلامتك%22,%22short_name%22:%22سلامتك%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #0f172a;
+            --secondary-dark: #1e293b;
+            --tertiary-dark: #0f172a;
+            --cyan-primary: #00ff2f;
+            --cyan-secondary: #06b6d4;
+            --cyan-light: #22d3ee;
+            --red-danger: #ff4444;
+            --red-light: #ffb4b4;
+            --green-success: #00e676;
+            --yellow-warning: #ffd700;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: rgba(0, 255, 47, 0.2);
+            --shadow-cyan: 0 0 20px rgba(0, 255, 47, 0.3);
+            --shadow-cyan-hover: 0 0 40px rgba(0, 255, 47, 0.3);
+        }
+
+        body {
+            font-family: 'Tajawal', 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* Grid background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(0, 255, 47, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 47, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-content {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            gap: 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--cyan-secondary) 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 47, 0.5);
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        .logo-text h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--cyan-light) 0%, var(--cyan-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--green-success);
+        }
+
+        .status-text {
+            font-size: 0.875rem;
+            color: var(--green-success);
+        }
+
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(0, 255, 47, 0.1);
+            border: 1px solid rgba(0, 255, 47, 0.3);
+            font-size: 0.875rem;
+            color: var(--cyan-light);
+        }
+
+        .btn-login {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(90deg, #06b6d4 0%, var(--cyan-secondary) 100%);
+            color: white;
+            border: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 47, 0.3);
+        }
+
+        .btn-login:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 255, 47, 0.5);
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--red-danger);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            grid-auto-rows: max-content;
+        }
+
+        @media (min-width: 768px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .card {
+            border-radius: 1rem;
+            border: 1px solid var(--border-color);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-cyan);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease-out backwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+
+        .card:hover {
+            box-shadow: var(--shadow-cyan-hover);
+            transform: translateY(-5px);
+        }
+
+        .card-lg {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .card-md {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 1024px) {
+            .card-lg,
+            .card-md {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: var(--cyan-light);
+            margin-bottom: 1rem;
+        }
+
+        /* Robot Section */
+        .robot-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .robot-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .robot-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 47, 0.2) 0%, transparent 70%);
+            filter: blur(30px);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .robot-face {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid rgba(0, 255, 47, 0.5);
+            box-shadow: var(--shadow-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .robot-face.alert {
+            animation: alertPulse 1s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 180, 180, 0.5);
+        }
+
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 180, 180, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 180, 180, 0.8); }
+        }
+
+        .robot-eyes {
+            display: flex;
+            gap: 2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .robot-eye {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan-light) 0%, var(--cyan-secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 255, 47, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robot-pupil {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #0f172a;
+            transition: all 0.1s ease;
+        }
+
+        .robot-eye.pulse .robot-pupil {
+            animation: pupilPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pupilPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .robot-mouth {
+            position: absolute;
+            bottom: 24px;
+            width: 48px;
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--cyan-primary) 0%, var(--cyan-light) 100%);
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .robot-mouth.speaking {
+            animation: mouthSpeak 0.3s ease-in-out infinite;
+            opacity: 1;
+        }
+
+        @keyframes mouthSpeak {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.2); }
+        }
+
+        .robot-status {
+            position: absolute;
+            bottom: -40px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--cyan-light);
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Vital Signs */
+        .vital-signs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .vital-sign {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 47, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .vital-sign:hover {
+            background: rgba(0, 255, 47, 0.1);
+            border-color: rgba(0, 255, 47, 0.3);
+        }
+
+        .vital-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .vital-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--cyan-light);
+            margin-bottom: 0.25rem;
+        }
+
+        .vital-unit {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .vital-status {
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+        }
+
+        .vital-status.normal {
+            background: rgba(0, 230, 118, 0.2);
+            color: var(--green-success);
+        }
+
+        .vital-status.warning {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--yellow-warning);
+        }
+
+        .vital-status.danger {
+            background: rgba(255, 68, 68, 0.2);
+            color: var(--red-danger);
+        }
+
+        /* ECG Chart */
+        .ecg-chart {
+            width: 100%;
+            height: 120px;
+            margin-top: 1rem;
+        }
+
+        .ecg-line {
+            stroke: var(--cyan-primary);
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 47, 0.5));
+        }
+
+        /* Measurement Log */
+        .measurement-log {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(0, 255, 47, 0.1);
+            font-size: 0.875rem;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .log-value {
+            color: var(--cyan-light);
+            font-weight: 500;
+        }
+
+        .log-delete {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+
+        .log-delete:hover {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--red-danger);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-action {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            color: white;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-upload {
+            background: linear-gradient(90deg, #06b6d4 0%, var(--cyan-secondary) 100%);
+            box-shadow: 0 0 15px rgba(0, 255, 47, 0.3);
+        }
+
+        .btn-upload:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(0, 255, 47, 0.5);
+        }
+
+        .btn-consultation {
+            background: linear-gradient(90deg, #0284c7 0%, #0369a1 100%);
+            box-shadow: 0 0 15px rgba(3, 105, 161, 0.3);
+        }
+
+        .btn-consultation:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(3, 105, 161, 0.5);
+        }
+
+        /* Emergency Button */
+        .emergency-card {
+            border-color: rgba(255, 68, 68, 0.5) !important;
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.3) 0%, rgba(120, 53, 15, 0.3) 100%) !important;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.2) !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .emergency-icon {
+            font-size: 2rem;
+        }
+
+        .btn-emergency {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .btn-emergency:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(255, 68, 68, 0.7);
+        }
+
+        .emergency-warning {
+            font-size: 0.75rem;
+            color: rgba(255, 68, 68, 0.7);
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        /* Medical Disclaimer */
+        .disclaimer-card {
+            border-color: rgba(255, 215, 0, 0.3) !important;
+            background: linear-gradient(135deg, rgba(120, 53, 15, 0.2) 0%, rgba(120, 53, 15, 0.1) 100%) !important;
+            grid-column: span 4;
+            display: flex;
+            gap: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .disclaimer-card {
+                grid-column: span 1;
+            }
+        }
+
+        .disclaimer-icon {
+            color: var(--yellow-warning);
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .disclaimer-content h4 {
+            color: var(--yellow-warning);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .disclaimer-content p {
+            font-size: 0.875rem;
+            color: rgba(255, 215, 0, 0.8);
+            line-height: 1.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(127, 29, 29, 0.8) 0%, rgba(120, 53, 15, 0.8) 100%);
+            border: 2px solid var(--red-danger);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 40px rgba(255, 68, 68, 0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgba(255, 180, 180, 0.9);
+        }
+
+        .modal-data {
+            background: rgba(120, 53, 15, 0.5);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .modal-data p {
+            font-size: 0.875rem;
+            color: rgba(255, 180, 180, 0.9);
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-data strong {
+            color: rgba(255, 180, 180, 1);
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .btn-modal {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-call {
+            background: var(--red-danger);
+            color: white;
+        }
+
+        .btn-call:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+        }
+
+        .btn-close {
+            background: rgba(120, 53, 15, 0.5);
+            color: rgba(255, 180, 180, 0.9);
+            border: 1px solid var(--red-danger);
+        }
+
+        .btn-close:hover {
+            background: rgba(120, 53, 15, 0.8);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            margin-top: 3rem;
+            text-align: center;
+            animation: slideUp 0.6s ease-out 1s backwards;
+        }
+
+        footer p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin: 0.5rem 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 255, 47, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 47, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 47, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-lg,
+            .card-md {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+
+            .disclaimer-card {
+                grid-column: span 1;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+        
+       /* Splash Screen - شاشة الترحيب */
+.splash-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, #0a1a2e 0%, #050c18 60%, #02050a 100%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeOut 0.8s ease-out 2.5s forwards;
+    overflow: hidden;
+}
+
+.splash-screen::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(0, 200, 255, 0.18) 0%, transparent 70%);
+    filter: blur(100px);
+    transform: translate(-50%, -50%);
+    animation: floatGlow 4s ease-in-out infinite;
+}
+
+.splash-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    animation: zoomIn 0.8s ease-out;
+}
+
+.splash-logo {
+    width: 280px;
+    max-width: 80%;
+    filter: drop-shadow(0 0 25px rgba(0, 200, 255, 0.6));
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.splash-title {
+    font-size: 2rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #22d3ee 0%, #06b6d4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 1.5rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+}
+
+.splash-subtitle {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    letter-spacing: 1px;
+}
+
+.splash-loader {
+    width: 220px;
+    height: 3px;
+    background: rgba(0, 200, 255, 0.1);
+    border-radius: 10px;
+    margin: 2rem auto 0;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(0, 200, 255, 0.2);
+}
+
+.splash-loader::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, #00c8ff 0%, #22d3ee 100%);
+    box-shadow: 0 0 15px rgba(0, 200, 255, 0.8);
+    animation: loadingBar 2s ease-out forwards;
+}
+
+/* Animations */
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 25px rgba(0, 200, 255, 0.6)); }
+    50% { filter: drop-shadow(0 0 45px rgba(0, 200, 255, 0.9)); }
+}
+
+@keyframes loadingBar {
+    to { width: 100%; }
+}
+
+@keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes floatGlow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.15); }
+}
+
+/* ===== تحسينات كارد الاتصال بالروبوت ===== */
+.robot-call-card .robot-call-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 1.2rem;
+    background: rgba(0, 200, 255, 0.05);
+    border: 1px solid rgba(0, 200, 255, 0.25);
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+}
+
+/* دائرة الروبوت مع النبض */
+.robot-call-card .robot-avatar {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.robot-call-card .robot-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #00c8ff;
+    object-fit: cover;
+    position: relative;
+    z-index: 2;
+    background: #0a1a2e;
+    padding: 8px;
+    box-shadow: 0 0 25px rgba(0, 200, 255, 0.4);
+}
+
+/* حل مشكلة الصورة البايظة */
+.robot-call-card .robot-avatar img::before {
+    content: "🤖";
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* حلقات النبض */
+.robot-call-card .robot-pulse {
+    position: absolute;
+    inset: -15px;
+    border-radius: 50%;
+    border: 2px solid #00c8ff;
+    animation: pulseRing 2s infinite;
+    z-index: 1;
+}
+.robot-call-card .robot-pulse:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+@keyframes pulseRing {
+    0% { transform: scale(0.9); opacity: 0.7; }
+    70% { transform: scale(1.3); opacity: 0; }
+    100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* نص الحالة */
+.robot-call-card .robot-status {
+    color: #22d3ee;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* زر الاتصال المحسن */
+.robot-call-card .call-btn {
+    all: unset;
+    width: 90%;
+    padding: 14px 20px;
+    background: linear-gradient(90deg, #00c8ff 0%, #06b6d4 100%);
+    color: white;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: 'Tajawal', sans-serif;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 200, 255, 0.3);
+}
+
+.robot-call-card .call-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 200, 255, 0.5);
+}
+
+/* حالة الاتصال */
+.robot-call-card .call-btn.active {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    animation: recording 1.2s infinite;
+}
+
+@keyframes recording {
+    0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
+}
+
+/* للجوال */
+@media (max-width: 768px) {
+    .robot-call-card .robot-avatar { width: 90px; height: 90px; }
+    .robot-call-card .call-btn { width: 100%; padding: 12px; }
+}
+
+/* ===== 1. تنسيق بطاقة الشات الجديدة ===== */
+        .chat-box-new {
+            display: flex;
+            flex-direction: column;
+            height: 420px;
+        }
+
+        .chat-box-new .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 200, 255, 0.15);
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
+            scroll-behavior: smooth;
+        }
+
+        .chat-box-new .chat-msg {
+            padding: 0.8rem 1.1rem;
+            border-radius: 1.2rem;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            word-wrap: break-word;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        .chat-box-new .chat-msg.bot {
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%);
+            border: 1px solid rgba(0, 200, 255, 0.25);
+            color: var(--cyan-light);
+            align-self: flex-start;
+            border-top-right-radius: 0.3rem;
+        }
+
+        .chat-box-new .chat-msg.user {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(0, 200, 255, 0.1) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: var(--text-primary);
+            align-self: flex-end;
+            border-top-left-radius: 0.3rem;
+        }
+
+        .cht-box-new .chat-input-area {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .chat-box-new .chat-input-area input {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            outline: none;
+            font-size: 0.9rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .chat-box-new .chat-input-area input:focus {
+            border-color: var(--cyan-primary);
+            box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.15);
+        }
+
+        .chat-box-new .chat-input-area button {
+            padding: 0.8rem 1.4rem;
+            background: linear-gradient(90deg, #00c8ff 0%, var(--cyan-secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: 'Tajawal', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 200, 255, 0.2);
+        }
+
+        .chat-box-new .chat-input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+    
+    
+    
+    <!-- شاشة الترحيب -->
+<div class="splash-screen" id="splashScreen">
+    <div class="splash-content">
+        <img src="splash-logo.png" alt="AURAVOX" class="splash-logo">
+        <h2 class="splash-title">AURAVOX أورافوكس</h2>
+        <div class="splash-loader"></div>
+        <p class="splash-subtitle">منصة صحتك الذكية</p>
+    </div>
+</div>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">❤</div>
+                    <div class="logo-text">
+                        <h1>سلامتك</h1>
+                        <p>Salamatak - منصة صحتك الذكية</p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <div class="connection-status">
+                        <div class="status-dot"></div>
+                        <span class="status-text">متصل</span>
+                    </div>
+
+                    <div class="auth-section">
+                        <button class="btn-login" onclick="handleLogin()">تسجيل الدخول</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <div class="bento-grid">
+                <!-- AI Robot Hub -->
+<div class="card">
+    <h2 class="card-title">مساعدك الصحي الذكي</h2>
+    <div class="robot-container">
+        <div class="robot-wrapper">
+            <div class="robot-glow"></div>
+            <div class="robot-face" id="robotFace">
+                <div class="robot-eyes">
+                    <div class="robot-eye" id="leftEye">
+                        <div class="robot-pupil"></div>
+                    </div>
+                    <div class="robot-eye" id="rightEye">
+                        <div class="robot-pupil"></div>
+                    </div>
+                </div>
+                <div class="robot-mouth" id="robotMouth"></div>
+            </div>
+            <div class="robot-status" id="robotStatus">جاهز للاستشارة</div>
+        </div>
+    </div>
+</div>
+
+<!-- كارد الاتصال بالروبوت -->
+<div class="card robot-call-card">
+    <h2 class="card-title">اتصال مباشر مع أورافوكس</h2>
+    <div class="robot-call-box">
+        <div class="robot-avatar">
+            <div class="robot-pulse"></div>
+            <img src="auravox-logo.png" alt="Robot" id="robotAvatarImg"> 
+        </div>
+        <p class="robot-status" id="callStatus">جاهز للاتصال الصوتي</p>
+        <button class="call-btn" id="callBtn" onclick="toggleCall()">
+            <span id="callBtnText">ابدأ الاتصال</span>
+        </button>
+    </div>    
+</div>
+
+<!-- Chat Box - كارد جديد -->
+<div class="card" id="chatCardOnly">
+    <h2 class="card-title">الدردشة مع أورافوكس</h2>
+    <div class="chat-box-new">
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg bot">
+                مرحبا بك في سلامتك ❤ 
+                <br>كيف اقدر اساعدك اليوم؟
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="اكتب سؤالك..." onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">ارسال</button>
+        </div>
+    </div>
+</div>
+
+                <!-- Vital Signs -->
+                <div class="card card-md">
+                    <h2 class="card-title">العلامات الحيوية</h2>
+                    <div class="vital-signs">
+                        <div class="vital-sign">
+                            <div class="vital-label">نبض القلب</div>
+                            <div class="vital-value" id="heartRate">85</div>
+                            <div class="vital-unit">نبضة/دقيقة</div>
+                            <div class="vital-status normal">طبيعي</div>
+                        </div>
+                        <div class="vital-sign">
+                            <div class="vital-label">الأكسجين</div>
+                            <div class="vital-value" id="oxygen">96</div>
+                            <div class="vital-unit">%</div>
+                            <div class="vital-status normal">طبيعي</div>
+                        </div>
+                        <div class="vital-sign">
+                            <div class="vital-label">درجة الحرارة</div>
+                            <div class="vital-value" id="temperature">37.2</div>
+                            <div class="vital-unit">°م</div>
+                            <div class="vital-status normal">طبيعي</div>
+                        </div>
+                        <div class="vital-sign">
+                            <div class="vital-label">ضغط الدم</div>
+                            <div class="vital-value" id="bloodPressure">125/82</div>
+                            <div class="vital-unit">ملم زئبق</div>
+                            <div class="vital-status normal">طبيعي</div>
+                        </div>
+                    </div>
+                    <svg class="ecg-chart" id="ecgChart" viewBox="0 0 400 120">
+                        <polyline class="ecg-line" points="0,60 20,60 30,40 40,80 50,60 70,60 80,50 90,70 100,60 120,60 130,45 140,75 150,60 170,60 180,55 190,65 200,60 220,60 230,40 240,80 250,60 270,60 280,50 290,70 300,60 320,60 330,45 340,75 350,60 370,60 380,55 390,65 400,60"/>
+                    </svg>
+                </div>
+
+                <!-- Measurement Log -->
+                <div class="card card-md">
+                    <h2 class="card-title">سجل القياسات</h2>
+                    <div class="measurement-log" id="measurementLog">
+                        <div class="log-item">
+                            <span class="log-time">14:32</span>
+                            <span class="log-value">نبض: 85</span>
+                            <button class="log-delete" onclick="deleteLog(this)">✕</button>
+                        </div>
+                        <div class="log-item">
+                            <span class="log-time">14:15</span>
+                            <span class="log-value">أكسجين: 96%</span>
+                            <button class="log-delete" onclick="deleteLog(this)">✕</button>
+                        </div>
+                        <div class="log-item">
+                            <span class="log-time">13:45</span>
+                            <span class="log-value">حرارة: 37.2°</span>
+                            <button class="log-delete" onclick="deleteLog(this)">✕</button>
+                        </div>
+                        <div class="log-item">
+                            <span class="log-time">13:20</span>
+                            <span class="log-value">ضغط: 125/82</span>
+                            <button class="log-delete" onclick="deleteLog(this)">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card card-md">
+                    <h2 class="card-title">الإجراءات السريعة</h2>
+                    <div class="quick-actions">
+                        <button class="btn-action btn-upload" onclick="handleUpload()">
+                            📤 رفع صورة التحليل
+                        </button>
+                        <button class="btn-action btn-consultation" onclick="handleConsultation()">
+                            ☎ استشارة طبية
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Emergency Button -->
+                <div class="card emergency-card">
+                    <div class="emergency-icon">🚨</div>
+                    <button class="btn-emergency" onclick="handleEmergency()">
+                        طلب طوارئ
+                    </button>
+                    <p class="emergency-warning">للحالات الحرجة فقط</p>
+                </div>
+
+              
+    </main>
+
+    <!-- Emergency Modal -->
+    <div class="modal" id="emergencyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-emoji">🚨</div>
+                <h3 class="modal-title">تنبيه طوارئ</h3>
+            </div>
+            <div class="modal-data">
+                <p><strong>بيانات المريض الحالية:</strong></p>
+                <p>• نبض القلب: 85 نبضة/دقيقة</p>
+                <p>• مستوى الأكسجين: 96%</p>
+                <p>• درجة الحرارة: 37.2°م</p>
+                <p>• ضغط الدم: 125/82 ملم زئبق</p>
+            </div>
+            <p style="color: rgba(255, 180, 180, 0.9); margin-bottom: 1.5rem; text-align: center;">
+                يرجى الاتصال برقم الطوارئ فوراً أو التوجه لأقرب مستشفى
+            </p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-call" onclick="handleCall()">
+                    ☎ اتصل برقم الطوارئ
+                </button>
+                <button class="btn-modal btn-close" onclick="closeModal()">
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 سلامتك - منصة صحتك الذكية | جميع الحقوق محفوظة</p>
+        <p>تم تطويره بـ ❤ لصحتك وسلامتك</p>
+    </footer>
+<button id="installBtn" style="display:none; position:fixed; bottom:20px; right:20px; z-index:9999; padding:12px 20px; background:#00c8ff; color:#000; border:none; border-radius:12px; font-weight:700;">تثبيت التطبيق</button>
+
+<script>
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block'; // ظهر الزر
+});
+
+installBtn.addEventListener('click', async () => {
+  if(deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+  }
+});
+</script>
+    <script>
+        
+         // 1. اخفاء السبلاش واظهار شاشة الدخول
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex'; // نعرض الدخول
+            }, 3000 );
+        });
+
+        // 2. دالة تسجيل الدخول
+        function submitLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if(email === '' || password === '') {
+                alert('الرجاء ادخال البريد وكلمة المرور');
+                return;
+            }
+            
+            // هنا تقدر تربط بـ API حقك
+            localStorage.setItem('isLoggedIn', 'true'); // حفظ حالة الدخول
+            
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainHeader').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            document.getElementById('mainHeader').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+        
+        // Robot animation states
+        const robotStates = ['idle', 'processing', 'speaking', 'alert'];
+        let currentStateIndex = 0;
+        const robotFace = document.getElementById('robotFace');
+        const robotStatus = document.getElementById('robotStatus');
+        const leftEye = document.getElementById('leftEye');
+        const rightEye = document.getElementById('rightEye');
+        const robotMouth = document.getElementById('robotMouth');
+
+        // Robot state messages
+        const stateMessages = {
+            idle: 'جاهز للاستشارة',
+            processing: 'جاري التحليل...',
+            speaking: 'جاري الشرح...',
+            alert: 'تنبيه مهم!'
+        };
+
+        // Update robot state every 4 seconds
+        setInterval(() => {
+            currentStateIndex = (currentStateIndex + 1) % robotStates.length;
+            updateRobotState(robotStates[currentStateIndex]);
+        }, 4000);
+
+        function updateRobotState(state) {
+            robotStatus.textContent = stateMessages[state];
+            robotFace.classList.remove('alert');
+            leftEye.classList.remove('pulse');
+            rightEye.classList.remove('pulse');
+            robotMouth.classList.remove('speaking');
+
+            if (state === 'processing') {
+                leftEye.classList.add('pulse');
+                rightEye.classList.add('pulse');
+            } else if (state === 'speaking') {
+                robotMouth.classList.add('speaking');
+            } else if (state === 'alert') {
+                robotFace.classList.add('alert');
+            }
+        }
+
+        // Mouse tracking for eyes
+        document.addEventListener('mousemove', (e) => {
+            if (robotStates[currentStateIndex] === 'idle') {
+                const eyes = [leftEye, rightEye];
+                eyes.forEach(eye => {
+                    const eyeRect = eye.getBoundingClientRect();
+                    const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+                    const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+
+                    const angle = Math.atan2(e.clientY - eyeCenterY, e.clientX - eyeCenterX);
+                    const distance = 8;
+
+                    const pupil = eye.querySelector('.robot-pupil');
+                    pupil.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                });
+            }
+        });
+
+        // Vital signs simulation
+        function updateVitalSigns() {
+            const heartRate = Math.floor(Math.random() * 20) + 75;
+            const oxygen = Math.floor(Math.random() * 5) + 94;
+            const temperature = (36.8 + Math.random() * 0.8).toFixed(1);
+            const systolic = Math.floor(Math.random() * 20) + 120;
+            const diastolic = Math.floor(Math.random() * 15) + 80;
+
+            document.getElementById('heartRate').textContent = heartRate;
+            document.getElementById('oxygen').textContent = oxygen;
+            document.getElementById('temperature').textContent = temperature;
+            document.getElementById('bloodPressure').textContent = `${systolic}/${diastolic}`;
+        }
+
+        // Update vital signs every 5 seconds
+        setInterval(updateVitalSigns, 5000);
+
+        // Log management
+        function deleteLog(button) {
+            button.closest('.log-item').style.animation = 'slideInLeft 0.3s ease-out reverse';
+            setTimeout(() => {
+                button.closest('.log-item').remove();
+            }, 300);
+        }
+
+        // Modal management
+        function handleEmergency() {
+            document.getElementById('emergencyModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('emergencyModal').classList.remove('active');
+        }
+
+        function handleCall() {
+            alert('يرجى الاتصال برقم الطوارئ: 911 أو 997 (حسب دولتك)');
+        }
+
+        function handleLogin() {
+            alert('سيتم إعادة التوجيه لصفحة تسجيل الدخول');
+        }
+
+        function handleUpload() {
+            alert('سيتم فتح نافذة رفع الملفات');
+        }
+
+        function handleConsultation() {
+            alert('سيتم فتح نافذة الاستشارة الطبية');
+        }
+
+        // Close modal on background click
+        document.getElementById('emergencyModal').addEventListener('click', (e) => {
+            if (e.target.id === 'emergencyModal') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        updateVitalSigns();
+        updateRobotState('idle');
+
+        // PWA installation prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Show install button if needed
+        });
+        
+        
+        // اخفاء شاشة الترحيب بعد 3 ثواني
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('splashScreen').style.display = 'none';
+    }, 3000);
+});
+
+// Chat Functions
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (message === '') return;
+
+    addMessage(message, 'user');
+    input.value = '';
+
+    // تغير حالة الروبوت ل "جاري التحليل"
+    updateRobotState('processing');
+
+    // رد تلقائي من الروبوت بعد ثانية
+    setTimeout(() => {
+        const botReply = getBotReply(message);
+        addMessage(botReply, 'bot');
+        updateRobotState('speaking');
+        setTimeout(() => updateRobotState('idle'), 2000);
+    }, 1000);
+}
+
+function addMessage(text, sender) {
+    const chatMessages = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.classList.add('chat-msg', sender);
+    msgDiv.textContent = text;
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight; // ينزل تحت تلقائي
+}
+
+function clearChat() {
+    document.getElementById('chatMessages').innerHTML = `
+        <div class="chat-msg bot">
+            تم مسح المحادثة ❤ 
+            <br>كيف اقدر اساعدك؟
+        </div>
+    `;
+}
+
+// ردود تلقائية بسيطة - تقدر تربطها بـ Gemini بعدين
+function getBotReply(userMsg) {
+    userMsg = userMsg.toLowerCase();
+    if (userMsg.includes('حرارة') || userMsg.includes('حمى')) {
+        return 'درجة حرارتك الحالية 37.2°م. لو ارتفعت فوق 38° يفضل مراجعة الطبيب وشرب السوائل.';
+    }
+    if (userMsg.includes('ضغط') || userMsg.includes('القلب')) {
+        return 'ضغطك 125/82 ونبضك 85. هذا ضمن المعدل الطبيعي. حافظ على شرب الماء والراحة.';
+    }
+    if (userMsg.includes('مرحبا') || userMsg.includes('السلام')) {
+        return 'وعليكم السلام ورحمة الله ❤ انا مساعدك الصحي أورافوكس. اسألني عن اي عرض.';
+    }
+    return 'فهمتك. انصحك بمتابعة العلامات الحيوية ولو استمر العرض اكثر من يومين استشر طبيب.';
+}
+
+
+let isCalling = false;
+
+function toggleCall() {
+    const btn = document.getElementById('callBtn');
+    const btnText = document.getElementById('callBtnText');
+    const status = document.getElementById('callStatus');
+    const pulse = document.querySelector('.robot-pulse');
+
+    isCalling = !isCalling;
+
+    if(isCalling) {
+        btn.classList.add('active');
+        btnText.textContent = 'انهاء الاتصال';
+        status.textContent = 'جاري الاستماع... تكلم الان';
+        pulse.style.animation = 'pulseRing 1s infinite';
+        updateRobotState('speaking'); // يشغل حالة التكلم حق الروبوت
+    } else {
+        btn.classList.remove('active');
+        btnText.textContent = 'ابدأ الاتصال';
+        status.textContent = 'جاهز للاتصال الصوتي';
+        pulse.style.animation = 'pulseRing 2s infinite';
+        updateRobotState('idle');
+    }
+}
+    </script>
+    <script>
+// كود اظهار زر التثبيت تلقائي
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log('جاهز للتثبيت');
+  // كروم هيظهر البانر تلقائي
+});
+
+// تسجيل Service Worker عشان يشتغل اوفلاين
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>

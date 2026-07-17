@@ -1,0 +1,23 @@
+{
+  "name": "AURAVOX - منصة صحتك الذكية",
+  "short_name": "AURAVOX",
+  "description": "منصة صحتك الذكية بالذكاء الاصطناعي",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050c18",
+  "theme_color": "#00c8ff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "auravox-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "splash-logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
